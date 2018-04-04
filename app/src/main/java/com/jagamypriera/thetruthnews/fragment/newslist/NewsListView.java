@@ -19,6 +19,7 @@ import android.widget.ViewAnimator;
 import com.jagamypriera.thetruthnews.fragment.FragmentChangeObservable;
 import com.jagamypriera.thetruthnews.R;
 import com.jagamypriera.thetruthnews.dagger.Injector;
+import com.jagamypriera.thetruthnews.fragment.newsdetails.NewsDetailsView;
 import com.jagamypriera.thetruthnews.fragment.newslist.adapter.NewsAdapter;
 import com.jagamypriera.thetruthnews.fragment.newslist.adapter.RecyclerViewClickListener;
 import com.jagamypriera.thetruthnews.fragment.newslist.model.NewsListResponseModel;
@@ -37,6 +38,7 @@ public class NewsListView extends Fragment implements NewsListInterface, ViewTre
     @Inject FragmentChangeObservable observer;
     @Inject FragmentManager manager;
     @Inject NewsListPresenter presenter;
+    @Inject NewsDetailsView detailsNews;
     @BindView(R.id.animator)ViewAnimator animator;
     @BindView(R.id.loading)View loading;
     @BindView(R.id.empty)View empty;
@@ -110,6 +112,7 @@ public class NewsListView extends Fragment implements NewsListInterface, ViewTre
     @Override
     public void onClick(NewsListResponseModel.News news, int position) {
         Timber.d("clicked at "+news.title+" "+position);
+        observer.setFragment(detailsNews.setData(news.url));
     }
     private RecyclerView.OnScrollListener paging = new RecyclerView.OnScrollListener() {
         @Override

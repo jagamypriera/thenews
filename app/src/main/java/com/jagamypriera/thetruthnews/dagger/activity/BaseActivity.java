@@ -57,9 +57,9 @@ public class BaseActivity extends AppCompatActivity implements FragmentManager.O
         fragmentChangeObserver.getFragment().subscribe(new Consumer<Fragment>() {
             @Override
             public void accept(Fragment fragment) throws Exception {
-                Timber.d(fragment.hashCode()+"");
-                if(previousHash[0] ==fragment.hashCode()) return;
-                previousHash[0] =fragment.hashCode();
+                Timber.d(fragment.hashCode()+" previous "+previousHash[0]);
+                //if(previousHash[0] ==fragment.hashCode()) return;
+                //previousHash[0] =fragment.hashCode();
                 replace(fragment, fragment.getClass().getCanonicalName());
             }
         });
