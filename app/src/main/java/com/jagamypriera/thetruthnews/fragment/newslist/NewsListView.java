@@ -6,22 +6,21 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.TextView;
 import android.widget.ViewAnimator;
 
+import com.jagamypriera.thetruthnews.Utils;
 import com.jagamypriera.thetruthnews.fragment.FragmentChangeObservable;
 import com.jagamypriera.thetruthnews.R;
 import com.jagamypriera.thetruthnews.dagger.Injector;
 import com.jagamypriera.thetruthnews.fragment.newsdetails.NewsDetailsView;
 import com.jagamypriera.thetruthnews.fragment.newslist.adapter.NewsAdapter;
-import com.jagamypriera.thetruthnews.fragment.newslist.adapter.RecyclerViewClickListener;
+import com.jagamypriera.thetruthnews.fragment.newslist.adapter.NewsClickListener;
 import com.jagamypriera.thetruthnews.fragment.newslist.model.NewsListResponseModel;
 
 import java.util.ArrayList;
@@ -30,11 +29,10 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import timber.log.Timber;
 
 
-public class NewsListView extends Fragment implements NewsListInterface, ViewTreeObserver.OnGlobalLayoutListener, RecyclerViewClickListener, SwipeRefreshLayout.OnRefreshListener {
+public class NewsListView extends Fragment implements NewsListInterface, ViewTreeObserver.OnGlobalLayoutListener, NewsClickListener, SwipeRefreshLayout.OnRefreshListener {
     @Inject FragmentChangeObservable observer;
     @Inject FragmentManager manager;
     @Inject NewsListPresenter presenter;
@@ -45,7 +43,6 @@ public class NewsListView extends Fragment implements NewsListInterface, ViewTre
     @BindView(R.id.list_news)RecyclerView newsList;
     @BindView(R.id.refresh)SwipeRefreshLayout refresh;
     private int page = 1;
-    private int limit=10;
     private boolean isLoading = false;
     private boolean isLastPage = false;
     private NewsAdapter adapter=new NewsAdapter().setListener(this);
@@ -100,19 +97,23 @@ public class NewsListView extends Fragment implements NewsListInterface, ViewTre
         if (page == 1) adapter.replace(news);
         if (page > 1 && news.size() > 0) adapter.update(news);
         isLoading = false;
-        if (news.size() < limit) isLastPage = true;
+        if (news.size() < Utils.MAX_NEWS) isLastPage = true;
     }
 
     @Override
     public void onGetNewsFail(String error) {
+        Timber.d(error);
         isLoading = false;
         if (page > 1) page--;
     }
 
     @Override
-    public void onClick(NewsListResponseModel.News news, int position) {
-        Timber.d("clicked at "+news.title+" "+position);
-        observer.setFragment(detailsNews.setData(news.url));
+    public void onClick(NewsListResponseModel.News news, View view, int position) {
+        Timber.d("clicked at "+news.title+" "+position+" id "+view.getId()+" root id "+R.id.news_item_root+" is favorite "+news.favorite);
+        switch (view.getId()){
+            case R.id.favorite: presenter.setFavorite(news.url, news.favorite);break;
+            case R.id.news_item_root:observer.setFragment(detailsNews.setData(news.url));break;
+        }
     }
     private RecyclerView.OnScrollListener paging = new RecyclerView.OnScrollListener() {
         @Override
@@ -129,7 +130,7 @@ public class NewsListView extends Fragment implements NewsListInterface, ViewTre
             int totalItemCount = layoutManager.getItemCount();
             int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
             if (!isLoading && !isLastPage) {
-                if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount && firstVisibleItemPosition >= 0 && totalItemCount >= limit) {
+                if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount && firstVisibleItemPosition >= 0 && totalItemCount >= Utils.MAX_NEWS) {
                     page++;
                     getNews(page);
                 }
@@ -149,5 +150,11 @@ public class NewsListView extends Fragment implements NewsListInterface, ViewTre
         page = 1;
         isLastPage = false;
         getNews(page);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        presenter.detachView();
     }
 }

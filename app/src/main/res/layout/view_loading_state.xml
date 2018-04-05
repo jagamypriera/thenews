@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <TextView
+    <!--<TextView
         android:textColor="#000"
         android:textSize="@dimen/dimen16sp"
         android:id="@+id/txt_loading_title"
@@ -19,5 +19,5 @@
         android:layout_marginTop="@dimen/dimen12"
         android:text="Please wait while retrieving news"
         android:gravity="center"
-        />
+        />-->
 </LinearLayout>

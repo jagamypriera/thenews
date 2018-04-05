@@ -5,34 +5,17 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ViewAnimator;
 
 import com.jagamypriera.thetruthnews.R;
-import com.jagamypriera.thetruthnews.dagger.Injector;
-import com.jagamypriera.thetruthnews.fragment.FragmentChangeObservable;
-import com.jagamypriera.thetruthnews.fragment.newslist.NewsListInterface;
-import com.jagamypriera.thetruthnews.fragment.newslist.NewsListPresenter;
-import com.jagamypriera.thetruthnews.fragment.newslist.adapter.NewsAdapter;
-import com.jagamypriera.thetruthnews.fragment.newslist.adapter.RecyclerViewClickListener;
-import com.jagamypriera.thetruthnews.fragment.newslist.model.NewsListResponseModel;
-
-import java.util.ArrayList;
-
-import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import timber.log.Timber;
 
 
 public class NewsDetailsView extends Fragment  {

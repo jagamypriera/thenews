@@ -7,13 +7,13 @@ import com.jagamypriera.thetruthnews.fragment.newslist.NewsListPresenter;
 
 import dagger.Module;
 import dagger.Provides;
+import io.realm.Realm;
 
 /**
  * Created by jagamypriera on 11/7/17.
  */
 @Module
 public class PresenterModule {
-    @Provides
-    @ApplicationScope
+    @Provides @ApplicationScope
     NewsListPresenter news(ApiService api){return new NewsListPresenter(api);}
 }

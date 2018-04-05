@@ -21,6 +21,7 @@ public class NewsListResponseModel {
         public int headlinePosition;
         public boolean favorite;
         public boolean loading;
+        public String country;
         public ArrayList<News> headlines=new ArrayList<>();
 
         @Override

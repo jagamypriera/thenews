@@ -4,6 +4,6 @@ import android.view.View;
 
 import com.jagamypriera.thetruthnews.fragment.newslist.model.NewsListResponseModel;
 
-public interface RecyclerViewClickListener {
-    void onClick(NewsListResponseModel.News news, int position);
+public interface NewsClickListener {
+    void onClick(NewsListResponseModel.News news, View view, int position);
 }

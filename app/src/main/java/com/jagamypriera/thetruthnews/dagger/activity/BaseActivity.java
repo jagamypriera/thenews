@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -20,6 +22,7 @@ import com.jagamypriera.thetruthnews.fragment.newslist.NewsListView;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.functions.Consumer;
 import timber.log.Timber;
@@ -32,11 +35,10 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public class BaseActivity extends AppCompatActivity implements FragmentManager.OnBackStackChangedListener {
     private int menuId = 0;
     private static ActivityComponent activityComponent;
-    @Inject
-    FragmentChangeObservable fragmentChangeObserver;
+    @Inject FragmentChangeObservable fragmentChangeObserver;
     @Inject FragmentManager manager;
-    @Inject
-    NewsListView newsDetail;
+    @Inject NewsListView newsDetail;
+    @BindView(R.id.toolbar)Toolbar toolbar;
     public static ActivityComponent getActivityComponent() {
         return activityComponent;
     }
@@ -45,7 +47,7 @@ public class BaseActivity extends AppCompatActivity implements FragmentManager.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FirebaseApp.initializeApp(getApplicationContext());
+
         activityComponent = Injector.getApplicationComponent().addActivityModules(
                         new ActivityModule(this),
                         new WidgetModule(),
@@ -64,19 +66,13 @@ public class BaseActivity extends AppCompatActivity implements FragmentManager.O
             }
         });
         getSupportFragmentManager().addOnBackStackChangedListener(this);
-        fragmentChangeObserver.setFragment(new NewsListView());
-    }
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-        if (menuId == 0) return false;
-        getMenuInflater().inflate(menuId, menu);
-        return true;
+        setupToolbar(toolbar);
+        if(savedInstanceState==null) fragmentChangeObserver.setFragment(new NewsListView());
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
+        return true;
     }
 
     @Override
@@ -86,7 +82,7 @@ public class BaseActivity extends AppCompatActivity implements FragmentManager.O
                 onBackPressed();
                 return true;
             default:
-                return super.onOptionsItemSelected(item);
+                return true;
         }
     }
 
@@ -123,6 +119,23 @@ public class BaseActivity extends AppCompatActivity implements FragmentManager.O
 
     @Override
     public void onBackStackChanged() {
+        int count=manager.getBackStackEntryCount();
+        ActionBar actionBar=getSupportActionBar();
+        assert actionBar!=null;
+        if(count>1) toolbar.setNavigationIcon( R.drawable.ic_arrow_back_black_24px);
+        else if(count==1) toolbar.setNavigationIcon(null);
+    }
 
+    public void setupToolbar(Toolbar mToolbar) {
+        if (mToolbar != null) {
+            //mToolbar.setNavigationIcon(R.drawable.ic_back);
+            mToolbar.setTitle("");
+            setSupportActionBar(mToolbar);
+            ActionBar actionBar = getSupportActionBar();
+            assert actionBar != null;
+            actionBar.setTitle("");
+            actionBar.setDisplayShowTitleEnabled(false);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 }

@@ -4,15 +4,14 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -20,11 +19,8 @@ import android.widget.ViewAnimator;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.Target;
 import com.jagamypriera.thetruthnews.R;
 import com.jagamypriera.thetruthnews.fragment.newslist.model.NewsListResponseModel;
 
@@ -35,8 +31,6 @@ import butterknife.BindColor;
 import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
-import timber.log.Timber;
 
 public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private ArrayList<NewsListResponseModel.News>news=new ArrayList<>();
@@ -44,8 +38,8 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private int HEADLINES=1, CONTENT=0, LOADING=-1;
     private int height;
     private int width;
-    private RecyclerViewClickListener listener;
-    public NewsAdapter setListener(RecyclerViewClickListener listener){
+    private NewsClickListener listener;
+    public NewsAdapter setListener(NewsClickListener listener){
         this.listener=listener;
         return this;
     }
@@ -103,12 +97,14 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         notifyItemChanged(position);
     }
     @SuppressWarnings("all")
-    class Holder extends RecyclerView.ViewHolder implements View.OnClickListener, RecyclerViewClickListener {
+    class Holder extends RecyclerView.ViewHolder implements View.OnClickListener, NewsClickListener {
         @Nullable @BindView(R.id.title) public TextView title;
+        @Nullable @BindView(R.id.headlines_title) public TextView headlinesTitle;
         @Nullable @BindView(R.id.headlines_list) public RecyclerView headlinesList;
         @Nullable @BindView(R.id.image) public ImageView image;
         @Nullable @BindView(R.id.animator) public ViewAnimator animator;
         @Nullable @BindView(R.id.loading) public View loading;
+        @Nullable @BindView(R.id.news_item_root) public View newsItemRoot;
         @BindColor(R.color.colorAccent)int accent;
         @BindDrawable(R.drawable.ic_photo_black_24px)Drawable launcher;
         @BindDrawable(R.drawable.ic_favorite_black_24px)Drawable favorite;
@@ -120,6 +116,7 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             super(itemView);
             ButterKnife.bind(this, itemView);
             if(favoritImage!=null)favoritImage.setOnClickListener(this);
+            if(newsItemRoot!=null)newsItemRoot.setOnClickListener(this);
         }
         public  int randInt(int min, int max) {
             Random rand = new Random();
@@ -151,6 +148,7 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             });
         }
         void setUpHeadlines(ArrayList<NewsListResponseModel.News> headlines){
+            headlinesTitle.setText(Html.fromHtml(context.getString(R.string.head_lines,headlines.get(0).country)));
             adapter.setImageSize(height,width);
             headlinesList.setAdapter(adapter);
             configList(headlinesList);
@@ -178,13 +176,13 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
         @Override
         public void onClick(View view) {
-            listener.onClick(news.get(getAdapterPosition()), getAdapterPosition());
-            toggleFavorite(getAdapterPosition());
+            if(view.getId()==R.id.favorite) toggleFavorite(getAdapterPosition());
+            listener.onClick(news.get(getAdapterPosition()),view, getAdapterPosition());
         }
 
         @Override
-        public void onClick(NewsListResponseModel.News aNews, int position) {
-            listener.onClick(aNews, position);
+        public void onClick(NewsListResponseModel.News aNews, View view, int position) {
+            listener.onClick(aNews,view, position);
         }
     }
 }
