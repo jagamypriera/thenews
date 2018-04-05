@@ -1,6 +1,6 @@
 package com.jagamypriera.thetruthnews.fragment.newslist;
 
-import com.jagamypriera.thetruthnews.Utils;
+import com.jagamypriera.thetruthnews.Constants;
 import com.jagamypriera.thetruthnews.api.ApiService;
 import com.jagamypriera.thetruthnews.fragment.newslist.model.NewsListFavoriteRealmModel;
 import com.jagamypriera.thetruthnews.fragment.newslist.model.NewsListHeadlinesRequestModel;
@@ -50,7 +50,7 @@ public class NewsListPresenter implements PresenterInterface<NewsListInterface> 
         return countries.get(index);
     }
     private DisposableObserver disposableNews(int page){
-        final String country=page%2==0?Utils.UK:Utils.USA;
+        final String country=page%2==0? Constants.UK: Constants.USA;
         view.showLoading();
         Map<String,String> news=new NewsListRequestModel().setPage(page).toMap();
         Map<String,String> headlines=new NewsListHeadlinesRequestModel().setCountry(country).toMap();
@@ -65,7 +65,7 @@ public class NewsListPresenter implements PresenterInterface<NewsListInterface> 
                 NewsListResponseModel.News newHeadlines=new NewsListResponseModel.News();
                 newHeadlines.headlines=headlines.newsList;
                 newHeadlines.headlines.get(0).country=country;
-                news.newsList.add(news.newsList.size()< Utils.MAX_NEWS?news.newsList.size()-1:Utils.HEADLINE_POSITION,newHeadlines);
+                news.newsList.add(news.newsList.size()< Constants.MAX_NEWS?news.newsList.size()-1: Constants.HEADLINE_POSITION,newHeadlines);
                 return news;
             }
         }).subscribeOn(Schedulers.io())

@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ViewAnimator;
 
-import com.jagamypriera.thetruthnews.Utils;
+import com.jagamypriera.thetruthnews.Constants;
 import com.jagamypriera.thetruthnews.fragment.FragmentChangeObservable;
 import com.jagamypriera.thetruthnews.R;
 import com.jagamypriera.thetruthnews.dagger.Injector;
@@ -97,7 +97,7 @@ public class NewsListView extends Fragment implements NewsListInterface, ViewTre
         if (page == 1) adapter.replace(news);
         if (page > 1 && news.size() > 0) adapter.update(news);
         isLoading = false;
-        if (news.size() < Utils.MAX_NEWS) isLastPage = true;
+        if (news.size() < Constants.MAX_NEWS) isLastPage = true;
     }
 
     @Override
@@ -130,7 +130,7 @@ public class NewsListView extends Fragment implements NewsListInterface, ViewTre
             int totalItemCount = layoutManager.getItemCount();
             int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
             if (!isLoading && !isLastPage) {
-                if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount && firstVisibleItemPosition >= 0 && totalItemCount >= Utils.MAX_NEWS) {
+                if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount && firstVisibleItemPosition >= 0 && totalItemCount >= Constants.MAX_NEWS) {
                     page++;
                     getNews(page);
                 }
