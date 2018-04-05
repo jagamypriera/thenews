@@ -27,6 +27,7 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
+import butterknife.BindColor;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
@@ -42,6 +43,7 @@ public class NewsListView extends Fragment implements NewsListInterface, ViewTre
     @BindView(R.id.empty)View empty;
     @BindView(R.id.list_news)RecyclerView newsList;
     @BindView(R.id.refresh)SwipeRefreshLayout refresh;
+    @BindColor(R.color.colorAccent)int accent;
     private int page = 1;
     private boolean isLoading = false;
     private boolean isLastPage = false;
@@ -79,6 +81,7 @@ public class NewsListView extends Fragment implements NewsListInterface, ViewTre
         mRecycler.setAdapter(adapter);
         mRecycler.addOnScrollListener(paging);
         refresh.setOnRefreshListener(this);
+        refresh.setColorSchemeColors(accent);
     }
     @Override
     public void showLoading() {

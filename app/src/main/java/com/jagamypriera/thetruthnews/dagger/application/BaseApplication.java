@@ -30,6 +30,7 @@ public class BaseApplication extends Application {
         initDagger();
         initTimber();
         initRealm();
+        initCalligraphy();
     }
 
     @Override
